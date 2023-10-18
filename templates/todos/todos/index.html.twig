@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Todos | All
+{% endblock %}
+
+{% block body %}
+	<h4 class="mb-4">All todos</h4>
+	<table class="table table-striped" id="myTable">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Title</th>
+				<th scope="col">Content</th>
+				<th scope="col">Action</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			{% for todo in todos %}
+				<tr>
+					<th scope="row">{{todo.id}}</th>
+					<td>{{todo.title}}</td>
+					<td>{{todo.content}}</td>
+					<td>
+						<a class="btn btn-warning btn-action" titre="Modifier le todo no.{{todo.id}}" href="{{path("app_todos_edit",{id:todo.id})}}">
+
+							<i class='bi bi-pencil'></i>
+						</a>
+						<a class="btn btn-danger mt-1" onclick="return confirm('Êtes vous sûr ?')" href="{{path("app_todos_delete",{id:todo.id})}}">
+							<i class='bi bi-trash'></i>
+						</a>
+
+
+					</td>
+				</tr>
+			{% endfor %}
+
+		</tbody>
+	</tbody>
+</table>{% endblock %}
