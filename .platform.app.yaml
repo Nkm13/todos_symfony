@@ -8,6 +8,14 @@ name: app
 # (https://docs.platform.sh/languages/php.html#supported-versions)
 # to find the supported versions for the 'php' type.
 type: 'php:8.2'
+build:
+  flavor: composer
+
+variables:
+    env:
+        # Configuration des variables d'environnement pour Symfony
+        APP_ENV: 'prod'
+        APP_DEBUG: 0
 
 # The following block defines a single writable directory, 'web/uploads'
 # The 'source' specifies where the writable mount is. The 'local' source
@@ -34,8 +42,14 @@ relationships:
 hooks:
     build: |
       set -e
+      bin/console cache:clear
     deploy: |
       set -e
+      bin/console cache:clear
+      bin/console doctrine:database:drop --force
+      bin/console doctrine:database:create
+      bin/console doctrine:database:shema --no-interaction
+      bin/console doctrine:fixtures:load --no-interaction
 
 web:
   locations: 
