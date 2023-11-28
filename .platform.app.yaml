@@ -28,7 +28,7 @@ disk: 2048
 # to the application in the PLATFORM_RELATIONSHIPS variable. The right-hand
 # side is in the form '<service name>:<endpoint name>'.
 relationships:
-    postgresdatabase: 'dbpostgres:postgresql'
+    database: 'db:postgresql'
 
 
 hooks:
