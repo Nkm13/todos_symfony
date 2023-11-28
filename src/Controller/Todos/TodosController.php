@@ -2,7 +2,9 @@
 
 namespace App\Controller\Todos;
 
+use App\Data\SearchData;
 use App\Entity\Todo;
+use App\Form\SearchType;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,14 +13,28 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use function PHPUnit\Framework\isEmpty;
+
 class TodosController extends AbstractController
 {
     #[Route('/todos/all', name: 'app_todos_all')]
-    public function index(TodoRepository $todoRepo): Response
+    public function index(TodoRepository $todoRepo, Request $request): Response
     {
-        $todos =  $todoRepo->findAll();
+        $data = new SearchData();
+        $form = $this->createForm(SearchType::class, $data);
+        $form->handleRequest($request);
+
+        //dd($data);
+        if ($data->q || $data->statut || $data->network) {
+            $todos = $todoRepo->findSearch($data);
+        } else {
+
+            $todos =  $todoRepo->findAll($data);
+        };
+
         return $this->render('todos/todos/index.html.twig', [
             'todos' => $todos,
+            "form" => $form->createView(),
         ]);
     }
 

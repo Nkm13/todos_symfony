@@ -4,13 +4,32 @@
 {% endblock %}
 
 {% block body %}
+	
+	<div class="row">
+	<div class="col-sm-3 ">
+	{{ form_start(form) }}
+
+	{{ form_row(form.q) }}
+	<h6>Statut</h6>
+	{{ form_row(form.statut) }}
+	<h6>Network</h6>
+	{{ form_row(form.network) }}
+	<button type="submit" class="btn btn-primary w-100">Filtrer</button>
+
+	{{ form_end(form) }}
+	</div>
+	<div class="col-sm-9 ">
 	<h4 class="mb-4">All todos</h4>
 	<table class="table table-striped" id="myTable">
 		<thead>
 			<tr>
 				<th scope="col">#</th>
+				<th scope="col">Date</th>
 				<th scope="col">Title</th>
 				<th scope="col">Content</th>
+				<th scope="col">Phone</th>
+				<th scope="col">Network</th>
+				<th scope="col">Statut</th>
 				<th scope="col">Action</th>
 
 			</tr>
@@ -19,8 +38,19 @@
 			{% for todo in todos %}
 				<tr>
 					<th scope="row">{{todo.id}}</th>
+					<td>{{"now"| date("Y-m-d h:i") }}</td>
 					<td>{{todo.title}}</td>
 					<td>{{todo.content}}</td>
+					<td>{{todo.phone}}</td>
+					<td>{{todo.network}}</td>
+					<td>
+					{% if todo.statut %}
+					<span class="badge bg-success">Validé</span>
+					{% else %}
+					<span class="badge bg-danger">Annulé</span>
+					{% endif %}
+					
+					</td>
 					<td>
 						<a class="btn btn-warning btn-action" titre="Modifier le todo no.{{todo.id}}" href="{{path("app_todos_edit",{id:todo.id})}}">
 
@@ -36,5 +66,6 @@
 			{% endfor %}
 
 		</tbody>
-	</tbody>
+	</tbody></div>
+	</div>
 </table>{% endblock %}

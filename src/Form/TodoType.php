@@ -15,6 +15,10 @@ class TodoType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
+            ->add('phone')
+            ->add('added_date')
+            ->add('network')
+            ->add('statut')
             ->add("Enregistrer", SubmitType::class);
     }
 
