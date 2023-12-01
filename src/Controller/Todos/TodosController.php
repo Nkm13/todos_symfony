@@ -4,19 +4,23 @@ namespace App\Controller\Todos;
 
 use App\Data\SearchData;
 use App\Entity\Todo;
+use App\Events\AddTodoEvent;
+use App\Events\SendEmailEvent;
 use App\Form\SearchType;
 use App\Form\TodoType;
 use App\Repository\TodoRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use function PHPUnit\Framework\isEmpty;
-
 class TodosController extends AbstractController
 {
+    public function __construct(private EventDispatcherInterface $dispacher)
+    {
+    }
     #[Route('/todos/all', name: 'app_todos_all')]
     public function index(TodoRepository $todoRepo, Request $request): Response
     {
@@ -51,6 +55,12 @@ class TodosController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($todo);
             $em->flush();
+
+            //create and dispache event
+
+            $addTodoEvent = new AddTodoEvent($todo);
+            $this->dispacher->dispatch($addTodoEvent, AddTodoEvent::ADD_TODO);
+
             return $this->redirectToRoute("app_todos_all");
         }
         return $this->render('todos/todos/add.html.twig', [
@@ -73,6 +83,12 @@ class TodosController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+
+            //create and dispache event
+
+            $sendEmailEvent = new SendEmailEvent($todo);
+            $this->dispacher->dispatch($sendEmailEvent, SendEmailEvent::SEND_EMAIL);
+
             return $this->redirectToRoute("app_todos_all");
         }
         return $this->render('todos/todos/add.html.twig', [
